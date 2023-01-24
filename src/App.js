@@ -1,8 +1,10 @@
 import React from 'react'
+import TodoForm from './componets/TodoForm'
 
 const App = () => {
   return (
-    <div>App</div>
+    <div> 
+      <TodoForm/></div>
   )
 }
 
