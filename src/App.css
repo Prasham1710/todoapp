@@ -16,13 +16,13 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    width: 330px;
-    min-height: 600px;
+    width: 370px;
+    min-height: 400px;
     background: #161a2b;
     text-align: center;
     margin: 128px auto;
     border-radius: 10px;
-    padding-bottom: 32px;
+    padding-bottom: 3px;
 }
 
 h1 {
