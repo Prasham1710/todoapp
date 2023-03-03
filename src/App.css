@@ -16,7 +16,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    width: 430px;
+    width: 330px;
     min-height: 600px;
     background: #161a2b;
     text-align: center;
@@ -41,11 +41,11 @@ h1 {
 }
 
 .todo-input {
-    padding: 14px 32px 14px 16px;
+    padding: 9px 32px 9px 16px;
     border-radius: 4px 0 0 4px;
     border: 2px solid #5d0cff;
     outline: none;
-    width: 320px;
+    width: 200px;
     background: transparent;
     color: #fff;
 }
@@ -55,7 +55,7 @@ h1 {
 }
 
 .todo-button {
-    padding: 16px;
+    padding: 10px;
     border: none;
     border-radius: 0 4px 4px 0;
     cursor: pointer;
