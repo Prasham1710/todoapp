@@ -1,25 +1,25 @@
 import React, { useState,useEffect } from 'react'
-import './App.css';
-const App = () => {
+function App () {
     const [todos, setTodos] = useState([])
     const [todo, setTodo] = useState("")
     const [todoEditing, setTodoEditing] = useState(null)
     const [editingText, setEditingText] = useState("");
 
     useEffect(()=> {
-         const json = localStorage.getItem("todos");
-    const loadedTodos = JSON.parse(json);
-    if (loadedTodos) {
-      setTodos(loadedTodos);
-    }
-  }, []);
+        const temp = localStorage.getItem("todos")
+        const loadedTodos = JSON.parse(temp)
+
+        if(loadedTodos){
+            setTodos(loadedTodos)
+        }
+    },[])
     useEffect(() => {
-        const json = JSON.stringify(todos);
-    localStorage.setItem("todos", json);
-    }, [todos]);
+        const temp = localStorage.getItem("todos")
+        localStorage.setItem("todos",temp)
+    }, [todos])
 
     function handleSubmit(e){
-        e.preventDefault();
+        e.preventDefault()
     const newTodo = {
         id: new Date().getTime(),
         text: todo,
