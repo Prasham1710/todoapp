@@ -75,16 +75,10 @@ function editTodo(id) {
         
         <button className='border w-[90%] rounded-xl my-7 py-1  bg-blue-700 hover:bg-indigo-500 text-white' onClick={()=> deleteTodo(todo.id)}>Delete</button>
 
-        {todoEditing === todo.id ? ( <button onClick={() => editTodo(todo.id)}>Submit Edits </button>):(<button onClick={() => setTodoEditing(todo.id)}>Edit </button>)}
-       
-        
-        
+        {todoEditing === todo.id ? ( <button onClick={() => editTodo(todo.id)}>Submit Edits </button>):(<button onClick={() => setTodoEditing(todo.id)}>Edit </button>)}   
         </div>
         )}
         </div>
-            
-       
-        
     </div>
   )
 }
