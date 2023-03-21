@@ -1,83 +1,72 @@
-import React, { useState,useEffect } from 'react'
+import { collection, onSnapshot, query, updateDoc, doc, addDoc , deleteDoc} from 'firebase/firestore';
+import React, {useState,useEffect} from 'react'
+import {AiOutlinePlus  } from 'react-icons/ai';
+import Todo from './Todo';
+import { db } from './firebase';
 function App () {
-    const [todos, setTodos] = useState([])
-    const [todo, setTodo] = useState("")
-    const [todoEditing, setTodoEditing] = useState(null)
-    const [editingText, setEditingText] = useState("");
 
-    useEffect(()=> {
-        const temp = localStorage.getItem("todos")
-        const loadedTodos = JSON.parse(temp)
+const [todos, setTodos] = useState([]);
+const [input, setInput] = useState ('')
 
-        if(loadedTodos){
-            setTodos(loadedTodos)
-        }
-    },[])
-    useEffect(() => {
-        const temp = localStorage.getItem("todos")
-        localStorage.setItem("todos",temp)
-    }, [todos])
-
-    function handleSubmit(e){
-        e.preventDefault()
-    const newTodo = {
-        id: new Date().getTime(),
-        text: todo,
-        completed: false,
+//create todo
+const createTodo =async(e) => {
+    e.preventDefault(e)
+    if(input === ''){
+        alert('Please enter a valid todo')
+        return
     }
-
-    setTodos([...todos].concat(newTodo))
-    setTodo("")
-}
-function deleteTodo(id) {
-    const updatedTodos =[...todos].filter((todo) => todo.id !== id)
-    setTodos(updatedTodos)
-}
-function toggleComplete(id){
-    const updatedTodos = [...todos].map((todo) => {
-        if(todo.id === id){
-            todo.completed = !todo.completed
-        }
-        return todo
+  await addDoc(collection(db, 'todos'),{
+    text: input,
+    completed: false
+  })
+};
+//read todo from firebase
+useEffect(()=>{
+    const q = query(collection(db, 'todos'))
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        let todosArr = []
+        querySnapshot.forEach((doc) => {
+            todosArr.push({...doc.data(), id: doc.id})
+        });
+        setTodos(todosArr);
+    });
+    return () => unsubscribe();
+  }, []);
+//update todo from firebase
+const toggleComplete = async (todo) =>{
+    await updateDoc(doc(db, 'todos' ,todo.id),{
+        completed: !todo.completed
     })
-    setTodos(updatedTodos)
 }
-function editTodo(id) {
-    const updatedTodos = [...todos].map((todo) => {
-        if(todo.id === id){
-            todo.text = editingText
-        }
-        return todo
-    } )
-    setTodos(updatedTodos)
-    setTodoEditing(null)
-    setEditingText("")
+//Delete todo
+const deleteTodo  = async(id) => {
+    await deleteDoc(doc(db, 'todos',id))
 }
   return (
-    <div className='flex flex-col justify-center items-center h-screen'>
-        <form  onSubmit={handleSubmit} className=''>
-            <input className= 'w-70 border relative   p-1 bg-red-300' type="text" placeholder = "enter your task" onChange={(e) => setTodo(e.target.value)} value={todo}/>
-            <button className='border w-[25%] rounded-xl my-7 py-1  bg-blue-700 hover:bg-indigo-500 text-white' type='submit'>AddTodo</button>
-        </form>
-        
-        <div >
-        {todos.map((todo) => <div  className='flex' key={todo.id}> 
-        <input type="checkbox" onChange={() => toggleComplete(todo.id)}
-        checked={todo.completed} />
-        {todoEditing === todo.id ?
-        (<input className='w-70 border relative h-10  p-1 bg-red-300'
-         type="text" 
-         onChange={(e) => setEditingText(e.target.value)} 
-         value={editingText} />) 
-         : 
-         (<div>{todo.text}</div>)}
-        
-        
-        <button className='border w-[90%] rounded-xl my-7 py-1  bg-blue-700 hover:bg-indigo-500 text-white' onClick={()=> deleteTodo(todo.id)}>Delete</button>
-
-        {todoEditing === todo.id ? ( <button onClick={() => editTodo(todo.id)}>Submit Edits </button>):(<button onClick={() => setTodoEditing(todo.id)}>Edit </button>)}   
-        </div>
-        )}
+    <div className='h-screen w-screen p-4 bg-gradient-to-r from-[#2F80ED] to-[#1CB5E0]'>
+        <div className='bg-slate-100 max-w-[500px] w-full m-auto rounded-md shadow-xl p-4'>
+            <h3 className='text-3xl font-bold text-center text-gray-800 p-2'>Todo App</h3>
+            <form onSubmit={createTodo} className='flex justify-between'>
+                <input 
+                value= {input} 
+                onChange={(e) => setInput(e.target.value)} className='border p-2 w-full text-xl'
+                type="text"
+                placeholder='Add todo'/>
+                <button className='border p-4 ml-2 bg-purple-500 text-slate-100'>
+                    <AiOutlinePlus size={30}/></button>
+            </form>
+            <ul>
+                {todos.map((todo,index)=> (
+                <Todo 
+                key={index} 
+                todo={todo} 
+                toggleComplete={toggleComplete} 
+                deleteTodo ={deleteTodo}/>
+                 ))}
+                
+            </ul>
+            {todos.length < 1 ? null : <p className='text-center p-2'>{`You have ${todos.length} todos`}</p> }
+            
         </div>
     </div>
   )
